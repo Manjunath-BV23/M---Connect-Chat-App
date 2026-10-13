@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pulse — Chat together</title>
+  <title>M - Connect — Chat together</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,17 +12,17 @@
 <body>
   <main class="chat-shell">
     <aside class="sidebar" id="sidebar">
-      <div class="brand"><span class="brand-symbol">✦</span>PULSE</div>
+      <div class="brand"><span class="brand-symbol">✦</span>M - CONNECT</div>
       <button class="new-chat" id="newChat">＋ <span>New conversation</span></button>
       <label class="search"><span>⌕</span><input id="search" placeholder="Search messages" /></label>
-      <p class="side-label">RECENT MESSAGES</p>
+      <p class="side-label">PEOPLE IN THIS ROOM</p>
       <nav class="conversation-list" id="conversationList"></nav>
-      <div class="profile"><div class="profile-avatar">M</div><div><strong>Manjunath</strong><span><i></i> Available</span></div><button aria-label="Profile menu">•••</button></div>
+      <div class="profile"><div class="profile-avatar" id="profileInitial">?</div><div><strong id="profileName">Not connected</strong><span><i></i> <span id="profileStatus">Choose a room</span></span></div><button id="inviteButton" aria-label="Room code">•••</button></div>
     </aside>
     <section class="chat-view">
       <header class="chat-header">
         <button class="mobile-menu" id="mobileMenu" aria-label="Open conversations">☰</button>
-        <div class="chat-person"><div class="avatar avatar-amber" id="headerAvatar">L</div><div><h1 id="chatTitle">Lena Park</h1><p id="chatPresence"><i></i> Online now</p></div></div>
+        <div class="chat-person"><div class="avatar avatar-amber" id="headerAvatar">#</div><div><h1 id="chatTitle">Welcome to M - Connect</h1><p id="chatPresence"><i></i> Connect to a room to chat</p></div></div>
         <div class="header-actions"><button title="Start call">⌕</button><button title="More options">•••</button></div>
       </header>
       <section class="message-area" id="messageArea" aria-live="polite"></section>
@@ -36,6 +36,17 @@
     </section>
   </main>
   <div class="toast" id="toast"></div>
+  <dialog class="room-dialog" id="roomDialog">
+    <form id="roomForm">
+      <span class="side-label">REAL-TIME CHAT</span>
+      <h2>Chat with anyone, anywhere.</h2>
+      <p>Choose your display name, then create a private room or enter a room code from a friend.</p>
+      <label>Your name<input id="nameInput" maxlength="24" placeholder="Your name" required /></label>
+      <label>Room code <small>(leave blank to create one)</small><input id="roomInput" maxlength="6" placeholder="e.g. CONNECT" autocomplete="off" /></label>
+      <button class="room-join" type="submit">Enter chat room</button>
+    </form>
+  </dialog>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
