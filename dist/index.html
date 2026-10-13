@@ -13,6 +13,7 @@
   <main class="chat-shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand"><span class="brand-symbol">✦</span>M - CONNECT</div>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close conversations">×</button>
       <button class="new-chat" id="newChat">＋ <span>New conversation</span></button>
       <label class="search"><span>⌕</span><input id="search" placeholder="Search messages" /></label>
       <p class="side-label">PEOPLE IN THIS ROOM</p>
@@ -48,5 +49,14 @@
   </dialog>
   <script src="/socket.io/socket.io.js"></script>
   <script src="app.js"></script>
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('sidebarClose').addEventListener('click', () => sidebar.classList.remove('open'));
+    document.addEventListener('click', (event) => {
+      if (window.innerWidth <= 700 && sidebar.classList.contains('open') && !sidebar.contains(event.target) && !event.target.closest('#mobileMenu')) {
+        sidebar.classList.remove('open');
+      }
+    });
+  </script>
 </body>
 </html>
