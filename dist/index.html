@@ -50,11 +50,11 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="app.js"></script>
   <script>
-    const sidebar = document.getElementById('sidebar');
-    document.getElementById('sidebarClose').addEventListener('click', () => sidebar.classList.remove('open'));
+    const menuSidebar = document.getElementById('sidebar');
+    document.getElementById('sidebarClose').addEventListener('click', () => menuSidebar.classList.remove('open'));
     document.addEventListener('click', (event) => {
-      if (window.innerWidth <= 700 && sidebar.classList.contains('open') && !sidebar.contains(event.target) && !event.target.closest('#mobileMenu')) {
-        sidebar.classList.remove('open');
+      if (window.innerWidth <= 700 && menuSidebar.classList.contains('open') && !menuSidebar.contains(event.target) && !event.target.closest('#mobileMenu')) {
+        menuSidebar.classList.remove('open');
       }
     });
   </script>
