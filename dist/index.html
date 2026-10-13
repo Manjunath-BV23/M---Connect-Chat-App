@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulse — Chat together</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="chat-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-symbol">✦</span>PULSE</div>
+      <button class="new-chat" id="newChat">＋ <span>New conversation</span></button>
+      <label class="search"><span>⌕</span><input id="search" placeholder="Search messages" /></label>
+      <p class="side-label">RECENT MESSAGES</p>
+      <nav class="conversation-list" id="conversationList"></nav>
+      <div class="profile"><div class="profile-avatar">M</div><div><strong>Manjunath</strong><span><i></i> Available</span></div><button aria-label="Profile menu">•••</button></div>
+    </aside>
+    <section class="chat-view">
+      <header class="chat-header">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Open conversations">☰</button>
+        <div class="chat-person"><div class="avatar avatar-amber" id="headerAvatar">L</div><div><h1 id="chatTitle">Lena Park</h1><p id="chatPresence"><i></i> Online now</p></div></div>
+        <div class="header-actions"><button title="Start call">⌕</button><button title="More options">•••</button></div>
+      </header>
+      <section class="message-area" id="messageArea" aria-live="polite"></section>
+      <div class="typing" id="typing">Lena is typing<span></span><span></span><span></span></div>
+      <form class="composer" id="composer">
+        <button type="button" class="attach" aria-label="Attach file">＋</button>
+        <input id="messageInput" autocomplete="off" placeholder="Write a message…" />
+        <button type="button" class="emoji" aria-label="Add emoji">☺</button>
+        <button class="send" aria-label="Send message">↑</button>
+      </form>
+    </section>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
