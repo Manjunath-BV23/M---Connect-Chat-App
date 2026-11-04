@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="call.css" />
 </head>
 <body>
   <main class="chat-shell">
@@ -24,7 +25,7 @@
       <header class="chat-header">
         <button class="mobile-menu" id="mobileMenu" aria-label="Open conversations">☰</button>
         <div class="chat-person"><div class="avatar avatar-amber" id="headerAvatar">#</div><div><h1 id="chatTitle">Welcome to M - Connect</h1><p id="chatPresence"><i></i> Connect to a room to chat</p></div></div>
-        <div class="header-actions"><button title="Start call">⌕</button><button title="More options">•••</button></div>
+        <div class="header-actions"><button id="videoCallButton" title="Start video call" aria-label="Start video call">▣</button><button title="More options">•••</button></div>
       </header>
       <section class="message-area" id="messageArea" aria-live="polite"></section>
       <div class="typing" id="typing">Lena is typing<span></span><span></span><span></span></div>
@@ -37,6 +38,12 @@
     </section>
   </main>
   <div class="toast" id="toast"></div>
+  <section class="call-panel" id="callPanel" aria-label="Video call" hidden>
+    <div class="call-stage"><video id="remoteVideo" autoplay playsinline></video><p id="callStatus">Connecting…</p></div>
+    <video class="local-video" id="localVideo" autoplay muted playsinline></video>
+    <div class="call-controls"><button id="cameraToggle" type="button" aria-label="Turn camera off">▣</button><button id="muteToggle" type="button" aria-label="Mute microphone">♩</button><button id="endCall" class="end-call" type="button" aria-label="End call">☎</button></div>
+  </section>
+  <dialog class="incoming-call" id="incomingCall"><div><span class="side-label">INCOMING VIDEO CALL</span><h2 id="incomingCaller">Someone is calling</h2><p>Allow camera and microphone access to answer.</p><div class="call-answer-actions"><button id="declineCall" type="button">Decline</button><button id="acceptCall" type="button">Accept</button></div></div></dialog>
   <dialog class="room-dialog" id="roomDialog">
     <form id="roomForm">
       <span class="side-label">REAL-TIME CHAT</span>
@@ -49,6 +56,7 @@
   </dialog>
   <script src="/socket.io/socket.io.js"></script>
   <script src="app.js"></script>
+  <script src="call.js"></script>
   <script>
     const menuSidebar = document.getElementById('sidebar');
     document.getElementById('sidebarClose').addEventListener('click', () => menuSidebar.classList.remove('open'));
@@ -57,6 +65,32 @@
         menuSidebar.classList.remove('open');
       }
     });
+
+    const savedChatRoom = JSON.parse(localStorage.getItem('m-connect-room') || 'null');
+    function restoreChatRoom() {
+      if (!savedChatRoom) return;
+      me = savedChatRoom.name;
+      roomId = savedChatRoom.roomId;
+      updateRoom();
+      socket.emit('join-room', { name: me, roomId }, (reply) => {
+        if (reply && reply.ok) {
+          dialog.close();
+          return;
+        }
+        localStorage.removeItem('m-connect-room');
+        me = null;
+        roomId = null;
+        updateRoom();
+        dialog.showModal();
+      });
+    }
+    socket.on('room-history', () => {
+      if (me && roomId) localStorage.setItem('m-connect-room', JSON.stringify({ name: me, roomId }));
+    });
+    if (savedChatRoom) {
+      if (socket.connected) restoreChatRoom();
+      else socket.once('connect', restoreChatRoom);
+    }
   </script>
 </body>
 </html>
