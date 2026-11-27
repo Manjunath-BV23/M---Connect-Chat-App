@@ -45,3 +45,12 @@ $('#resetForm').onsubmit=e=>{e.preventDefault();const password=$('#resetPassword
 if(resetToken){$('#authDialog').close();$('#resetDialog').showModal()}
 
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(error=>console.warn('PWA offline support was not installed:',error)));
+
+const sidebarClose=document.createElement('button');
+sidebarClose.type='button';sidebarClose.className='sidebar-close';sidebarClose.setAttribute('aria-label','Close conversations menu');sidebarClose.title='Close menu';sidebarClose.textContent='×';
+$('#sidebar').prepend(sidebarClose);sidebarClose.onclick=()=>$('#sidebar').classList.remove('open');
+$('#addContact').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M3 20c.5-4 2.5-6 6-6 1.5 0 2.7.3 3.7 1M19 8v6M16 11h6"></path></svg>';
+$('#addContact').setAttribute('aria-label','Add user');$('#addContact').title='Add user';
+const uploadIcon=document.querySelector('.upload-file [aria-hidden="true"]');
+uploadIcon.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 12 6.6-6.6a3 3 0 1 1 4.2 4.2l-8.5 8.5a5 5 0 0 1-7.1-7.1L11 3.2"></path></svg>';
+$('.send').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 4 16 8-16 8 3-8-3-8Z"></path><path d="M7 12h13"></path></svg>';

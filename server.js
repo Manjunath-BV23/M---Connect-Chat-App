@@ -15,6 +15,7 @@ const RESET_TTL_MS = 30 * 60 * 1000;
 const emailOf = value => clean(value,120).toLowerCase();
 function smtpTransport(){if(!process.env.SMTP_HOST||!process.env.SMTP_FROM)return null;return nodemailer.createTransport({host:process.env.SMTP_HOST,port:Number(process.env.SMTP_PORT||587),secure:process.env.SMTP_SECURE==='true',auth:process.env.SMTP_USER?{user:process.env.SMTP_USER,pass:process.env.SMTP_PASS}:undefined})}
 function resetUrl(token){return `${String(process.env.APP_URL||'http://localhost:3000').replace(/\/$/,'')}/?reset=${encodeURIComponent(token)}`}
+app.get('/favicon.ico',(req,res)=>res.type('image/svg+xml').sendFile(path.join(__dirname,'dist','icons','m-connect.svg')));
 app.use(express.static(path.join(__dirname, 'dist')));
 const emptyStore=()=>({users:{},chats:{}});
 function loadLocalStore(){try{return JSON.parse(fs.readFileSync(STORE_FILE,'utf8'))}catch{return emptyStore()}}

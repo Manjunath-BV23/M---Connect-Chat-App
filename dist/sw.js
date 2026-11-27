@@ -1,4 +1,4 @@
-const CACHE_NAME = 'm-connect-shell-v1';
+const CACHE_NAME = 'm-connect-shell-v3';
 const APP_SHELL = ['/', '/index.html', '/style.css', '/call.css', '/app.js', '/call.js', '/manifest.webmanifest', '/icons/m-connect.svg'];
 
 self.addEventListener('install', event => {
