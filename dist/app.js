@@ -34,3 +34,5 @@ $('#forgotBack').onclick=()=>{$('#forgotDialog').close();$('#authDialog').showMo
 $('#forgotForm').onsubmit=e=>{e.preventDefault();socket.emit('request-password-reset',{email:$('#forgotEmail').value},reply=>{if(!reply.ok)return toast(reply.error);toast(reply.message);$('#forgotDialog').close();$('#authDialog').showModal()})};
 $('#resetForm').onsubmit=e=>{e.preventDefault();const password=$('#resetPassword').value;if(password!==$('#resetPasswordConfirm').value)return toast('Passwords do not match.');socket.emit('reset-password',{token:resetToken,password},reply=>{if(!reply.ok)return toast(reply.error);history.replaceState({},'',location.pathname);$('#resetDialog').close();login=true;authMode();$('#authDialog').showModal();toast('Password updated. Please sign in.')})};
 if(resetToken){$('#authDialog').close();$('#resetDialog').showModal()}
+
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(error=>console.warn('PWA offline support was not installed:',error)));

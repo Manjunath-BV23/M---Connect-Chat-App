@@ -1,0 +1,18 @@
+{
+  "name": "M-CONNECT — Chat. Share. Call.",
+  "short_name": "M-CONNECT",
+  "description": "Private messages, file sharing, voice notes, and video calls.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0c1110",
+  "theme_color": "#131a18",
+  "icons": [
+    {
+      "src": "/icons/m-connect.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
