@@ -1,0 +1,21 @@
+M-CONNECT — Chat. Share. Call.
+
+- Secure account registration and sign-in
+- Email-based password reset
+- User profiles with display name, avatar, and recovery email
+- Add contacts by username
+- One-to-one private chats
+- Create, join, and password-protect group chats
+- Real-time messages and typing indicators
+- Online presence and last-seen status
+- Edit and delete your own messages
+- Emoji reactions
+- File sharing for images, audio, documents, and downloads
+- Voice-message recording and sending
+- Browser notifications for new messages
+- Unread message badges
+- Video calling for direct chats
+- Camera preview, mic mute, camera toggle, accept/decline, and end-call controls
+- Responsive desktop and mobile interface
+- Branded M-CONNECT identity: "Chat. Share. Call."
+- Login/sign-up rate limiting and attachment safety checks
