@@ -5,16 +5,22 @@ const http = require('http');
 const express = require('express');
 const { Server } = require('socket.io');
 const nodemailer = require('nodemailer');
+const { Pool } = require('pg');
 const app = express(), server = http.createServer(app), io = new Server(server, { maxHttpBufferSize: 3e6 });
 const STORE_FILE = path.join(__dirname, 'data-store.json'), MAX_MESSAGES = 500, MAX_ATTACHMENT_BYTES = 2 * 1024 * 1024;
+const databaseUrl = process.env.DATABASE_URL;
+const database = databaseUrl ? new Pool({connectionString:databaseUrl,ssl:{rejectUnauthorized:false}}) : null;
 const sessions = new Map(), online = new Map(), rateWindows = new Map();
 const RESET_TTL_MS = 30 * 60 * 1000;
 const emailOf = value => clean(value,120).toLowerCase();
 function smtpTransport(){if(!process.env.SMTP_HOST||!process.env.SMTP_FROM)return null;return nodemailer.createTransport({host:process.env.SMTP_HOST,port:Number(process.env.SMTP_PORT||587),secure:process.env.SMTP_SECURE==='true',auth:process.env.SMTP_USER?{user:process.env.SMTP_USER,pass:process.env.SMTP_PASS}:undefined})}
 function resetUrl(token){return `${String(process.env.APP_URL||'http://localhost:3000').replace(/\/$/,'')}/?reset=${encodeURIComponent(token)}`}
 app.use(express.static(path.join(__dirname, 'dist')));
-function loadStore(){try{return JSON.parse(fs.readFileSync(STORE_FILE,'utf8'))}catch{return{users:{},chats:{}}}}
-const store=loadStore(); function saveStore(){fs.writeFileSync(STORE_FILE,JSON.stringify(store,null,2))}
+const emptyStore=()=>({users:{},chats:{}});
+function loadLocalStore(){try{return JSON.parse(fs.readFileSync(STORE_FILE,'utf8'))}catch{return emptyStore()}}
+let store=emptyStore(), persistQueue=Promise.resolve();
+function saveStore(){const snapshot=JSON.stringify(store);if(!database){fs.writeFileSync(STORE_FILE,snapshot);return}persistQueue=persistQueue.catch(()=>{}).then(()=>database.query('INSERT INTO m_connect_state (id,data,updated_at) VALUES (1,$1::jsonb,NOW()) ON CONFLICT (id) DO UPDATE SET data=EXCLUDED.data,updated_at=NOW()',[snapshot])).catch(error=>console.error('Could not save M-CONNECT data to Supabase:',error.message))}
+async function prepareStore(){if(!database){store=loadLocalStore();console.log('Using local data-store.json.');return}await database.query('CREATE TABLE IF NOT EXISTS m_connect_state (id SMALLINT PRIMARY KEY CHECK (id=1), data JSONB NOT NULL, updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())');const result=await database.query('SELECT data FROM m_connect_state WHERE id=1');if(result.rows[0]?.data){store=result.rows[0].data;console.log('Loaded M-CONNECT data from Supabase.');return}store=loadLocalStore();saveStore();await persistQueue;console.log('Created M-CONNECT data store in Supabase.');}
 const clean=(v,l=80)=>String(v||'').trim().slice(0,l), key=v=>clean(v,32).toLowerCase().replace(/[^a-z0-9_.-]/g,''), id=()=>crypto.randomBytes(12).toString('base64url');
 function roomCode(){let code;do code=crypto.randomBytes(4).toString('hex').toUpperCase();while(store.chats[code]);return code}
 function hash(password,salt=crypto.randomBytes(16).toString('hex')){return{salt,value:crypto.scryptSync(password,salt,64).toString('hex')}}
@@ -51,4 +57,5 @@ io.on('connection',socket=>{
  for(const event of ['call-invite','call-accepted','call-declined','webrtc-offer','webrtc-answer','webrtc-ice','call-ended'])socket.on(event,payload=>{const user=getUser(socket),chat=store.chats[clean(payload?.chatId,16).toUpperCase()];if(canAccess(user,chat))socket.to(chat.id).emit(event,{...payload,from:socket.id,name:user.name})});
  socket.on('disconnect',()=>{const username=socket.data.username;if(!username)return;online.get(username)?.delete(socket.id);if(!online.get(username)?.size){online.delete(username);store.users[username].lastSeen=new Date().toISOString();saveStore()}emitPresence()});
 });
-server.listen(process.env.PORT||3000,()=>console.log('M-Connect running on port 3000'));
+async function start(){try{await prepareStore();server.listen(process.env.PORT||3000,()=>console.log('M-Connect running on port 3000'))}catch(error){console.error('Could not connect to Supabase. Check DATABASE_URL:',error.message);process.exit(1)}}
+start();
